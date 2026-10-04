@@ -9,8 +9,9 @@ on:
     paths:
       - ".github/workflows/build.yml"
       - "app/**"
-  schedule:
-    - cron: "22 4 * * *"
+  # Fork (toddmok/zmk): no nightly schedule. Upstream's nightly job only runs
+  # for the zmkfirmware owner, so in a fork the cron produced an empty build
+  # matrix and failed every night.
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name == 'schedule' }}
@@ -20,7 +21,7 @@ permissions: {}
 
 jobs:
   build:
-    if: ${{ always() }}
+    if: ${{ !cancelled() && needs.compile-matrix.result == 'success' && needs.compile-matrix.outputs.include-list != '[]' }}
     runs-on: ubuntu-latest
     container:
       image: docker.io/zmkfirmware/zmk-build-arm:4.1
