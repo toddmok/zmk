@@ -13,6 +13,8 @@ name: release-please
 jobs:
   handle-commit:
     name: Handle new commit
+    # Fork (toddmok/zmk): ZMK_RELEASE_PLEASE_TOKEN only exists upstream.
+    if: ${{ github.repository_owner == 'zmkfirmware' }}
     runs-on: ubuntu-latest
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
